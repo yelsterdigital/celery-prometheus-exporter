@@ -96,6 +96,17 @@ class MonitorThread(threading.Thread):
                 time.sleep(5)
 
 
+class WorkerMonitoringThread(threading.Thread):
+    def __init__(self, *args, app=None, **kwargs):
+        self._app = app
+        super().__init__(*args, **kwargs)
+
+    def run(self):
+        while True:
+            WORKERS.set(len(self._app.control.ping(timeout=5)))
+            time.sleep(5)
+
+
 def setup_metrics():
     """
     This initializes the available metrics with default values so that
@@ -174,8 +185,12 @@ def main():
     t = MonitorThread(app=app)
     t.daemon = True
     t.start()
+    w = WorkerMonitoringThread(app=app)
+    w.daemon = True
+    w.start()
     start_httpd(opts.addr)
     t.join()
+    w.join()
 
 
 if __name__ == '__main__':
