@@ -41,10 +41,15 @@ Redis, take a look at the Celery documentation and install the additioinal
 requirements 😊 Also use the ``--broker`` option to specify a different broker
 URL.
 
+
 If you need to pass additional options to your brokers transport use the
 ``--transport_options``  option. It tries to read a dict from a JSON object.
 E.g. to set your master name when using Redis Sentinel for broker discovery:
 ``--transport_options '{"master_name": "mymaster"}'``
+
+Use ``--tz`` to specify the timezone the Celery app is using. Otherwise the
+systems local time will be used.
+
 
 If you then look at the exposed metrics, you should see something like this::
 

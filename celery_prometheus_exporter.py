@@ -9,6 +9,7 @@ import sys
 import threading
 import time
 import json
+import os
 
 __VERSION__ = (1, 1, 0, 'final', 0)
 
@@ -138,6 +139,9 @@ def main():
         help="Address the HTTPD should listen on. Defaults to {}".format(
             DEFAULT_ADDR))
     parser.add_argument(
+        '--tz', dest='tz',
+        help="Timezone used by the celery app.")
+    parser.add_argument(
         '--verbose', action='store_true', default=False,
         help="Enable verbose logging")
     parser.add_argument(
@@ -151,6 +155,10 @@ def main():
 
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
+
+    if opts.tz:
+        os.environ['TZ'] = opts.tz
+        time.tzset()
 
     setup_metrics()
     app = celery.Celery(broker=opts.broker)
