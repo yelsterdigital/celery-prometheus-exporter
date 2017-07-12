@@ -79,10 +79,10 @@ class MonitorThread(threading.Thread):
     def _incr_ready_task(self, evt, state):
         try:
             # remove event from list of in-progress tasks
-            self._state.tasks.pop(evt['uuid'])
+            task = self._state.tasks.pop(evt['uuid'])
+            TASKS.labels(state=state, name=task.name).inc()
         except KeyError:
             pass
-        TASKS.labels(state).inc()
 
     def _collect_unready_tasks(self):
         cnt = collections.Counter(
